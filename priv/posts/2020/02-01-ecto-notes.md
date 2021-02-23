@@ -1,4 +1,3 @@
-#/priv/posts/2020/02-01-ecto-notes.md
 %{
   title: "Ecto Elixir",
   author: "Luiz Cattani",
