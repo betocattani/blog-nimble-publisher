@@ -44,7 +44,8 @@ defmodule Notes.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:nimble_publisher, "~> 0.1.0"},
       {:makeup_elixir, ">= 0.0.0"},
-      {:makeup_erlang, ">= 0.0.0"}
+      {:makeup_erlang, ">= 0.0.0"},
+      {:distillery, "~> 2.0"}
     ]
   end
 
