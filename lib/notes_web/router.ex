@@ -16,8 +16,7 @@ defmodule NotesWeb.Router do
   scope "/", NotesWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    get "/blog", BlogController, :index
+    get "/", BlogController, :index
     get "/blog/:id", BlogController, :show
   end
 
