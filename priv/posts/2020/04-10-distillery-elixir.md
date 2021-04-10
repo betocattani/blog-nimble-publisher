@@ -71,6 +71,15 @@ export MY_COOKIE=secret
 export REPLACE_OS_VARS=true
 ```
 
+```bash
+export SECRET_KEY_BASE="$(mix phx.gen.secret)"
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/store_dev"
+export APP_NAME=store
+export MY_HOSTNAME=postgres-free-tier-v2020.gigalixir.com
+export MY_COOKIE=secret
+export REPLACE_OS_VARS=true
+```
+
 Build the release locally
 ```bash
 $ MIX_ENV=prod mix distillery.release --env=prod
@@ -210,10 +219,10 @@ $ iex(store@10.56.14.197)1>
 
 Access the remote console
 ```elixir
-$ gigalixir remote.console
+$ gigalixir ps:remote_console
 
-iex> seed_script = Path.join(["#{:code.priv_dir(:myapp)}", "repo", "seeds.exs"])
-iex> Code.eval_file(seed_script)
+iex(store@10.56.14.197)1> seed_script = Path.join(["#{:code.priv_dir(:store)}", "repo", "seeds.exs"])
+iex(store@10.56.14.197)1> Code.eval_file(seed_script)
 ```
 
 # Logs
