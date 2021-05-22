@@ -1,14 +1,12 @@
-<h1>Posts</h1>
+<h4>Posts</h4>
 
 <%= for post <- @posts do %>
   <div id="<%= post.id %>" style="margin-bottom: 1rem;">
-    <h2>
-      <%= link post.title, to: Routes.blog_path(@conn, :show, post)%>
-    </h2>
-
-    <p>
+    <span>
       <time><%= post.date %></time>
-    </p>
+    </span> <>
+
+    <h3> <%= link post.title, to: Routes.blog_path(@conn, :show, post), class: "post-title" %></h3>
 
     <!-- <p>
       Tagged as <%= Enum.join(post.tags, ", ") %>

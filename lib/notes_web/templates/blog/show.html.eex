@@ -1,13 +1,9 @@
-<%= link "← All posts", to: Routes.blog_path(@conn, :index)%>
+<%= link "← All posts", to: Routes.blog_path(@conn, :index), class: "link-back" %>
 
-<h1><%= @post.title %></h1>
+<h1 class="post-title"><%= @post.title %></h1>
 
-<p>
-  <time><%= @post.date %></time> by <%= @post.author %>
-</p>
+<i><p><time><%= @post.date %></time> by <%= @post.author %></p><i>
 
-<p>
-  Tagged as <%= Enum.join(@post.tags, ", ") %>
-</p>
+<i><p>Tagged as <%= Enum.join(@post.tags, ", ") %></p></i>
 
 <%= raw @post.body %>
