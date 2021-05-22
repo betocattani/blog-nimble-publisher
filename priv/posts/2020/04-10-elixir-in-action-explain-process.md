@@ -185,3 +185,135 @@ end
 
 "message not received"
 ```
+
+```elixir
+send(self(), {:message, 1})
+
+receive do
+  message -> IO.inspect(message)
+after
+  5000 -> IO.puts("message not received")
+end
+
+{:message, 1}
+{:message, 1}
+```
+
+```elixir
+receive do
+  message -> IO.inspect(message)
+after
+  5000 -> IO.puts("message not received")
+end
+
+"Message not received"
+```
+
+
+Receive Expression works as follows:
+1 - Take the first message from the `mailbox`.
+2 - Try to `match` it against any of the `provided patterns` going from the top to bottom.
+3 - If a `pattern matches` the message, `run` the corresponding `code`.
+4 - If `no pattern matches`, put the message `back into the mailbox` at the same position it originally occupied. Then try the `next message`.
+5 - If there are `no more messages in the queue`, `wait for a new one to arrive. When a new messages arrives, start from step 1`, inspecting the first message in the mailbox
+6 - If the `after` clause is specified and no messages is matched in the given amount of time, run the code from the `after` block.
+
+
+The result of `receive` block is the result of the `last expression` in the appropriate clause
+```elixir
+iex> send(self(), {:message, 1})
+iex> receive_result =
+      receive do
+        {:message, x} ->
+          x + 2        # The result of receive
+      end
+
+iex> IO.inspect(receive_result)
+```
+
+### Process functions
+
+```elixir
+# Returns the info about one process
+Process.info(self())
+
+# Registers the given pid_or_port under the given name.
+Process.register(pid_or_port, :my_process_name)
+# Returns nil if the PID or PORT not exist locally and alive
+# The name is already registered
+# The pid or port is already registered under a different name
+
+# Return a list os process registered
+Process.registered
+[:my_process_name, :logger_sup.. ]
+
+# Find a process by module name, returns PID of the process
+Process.whereis(:logger_sup)
+Process.whereis(IEx.Pry)
+
+# list all pids from alive process
+Enum.map(Process.list, fn process -> Process.whereis(process))
+
+# return PID from group leader process
+Process.group_leader
+
+# sleep process by 4000 miliseconds
+Process.sleep(4000)
+
+# Tells whether the given process is alive on the local node.
+Process.alive?(pid)
+```
+
+## Synchronous passing messaging on top asynchronous
+```elixir
+# execution of the query
+run_query = 
+  fn query_def ->
+    Process.sleep(2000)
+    "#{query_def} result"
+  end
+
+async_query = 
+  fn query_def ->
+    caller = self() # store the pid of the calling process
+    spawn(fn ->
+      send(caller, {:query_result, run_query.(query_def)})
+    end)
+  end
+
+# run all queries concurrently and store in the mailbox of the caller process
+Enum.each(1..5, &async_query.("query #{&1}"))
+
+
+# Get result from mailbox process, in this case the shell process
+get_result = 
+  fn ->
+    receive do
+     {:query_result, result} -> result
+    end
+  end
+
+results = Enum.map(1..5, fn _ -> get_result.() end)
+```
+
+```elixir
+1..5
+  |> Enum.map(&async_query.("query #{&1}"))    
+  |11> Enum.map(fn _ -> get_result.() end)
+```
+
+
+Exercise DatabaseServer in Iex
+```elixir
+Enum.map(1..100, fn _ -> DatabaseServer.start() end)
+
+Enum.each(
+  1..50,
+  fn query_def ->
+    server_pid = Enum.at(pool, :rand.uniform(100) - 1)
+    DatabaseServer.run_async(server_pid, query_def)
+  end
+)
+
+Enum.map(1..50, fn _ -> DatabaseServer.get_result() end)
+```
